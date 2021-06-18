@@ -34,7 +34,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # the repository and replace the whole RUN statement below by the following COPY statement 
 # in your local source using :
 #
-COPY ./test-controller /opt/tutorial
+COPY ./test-controller /fiware-test-controller
 #
 
 # hadolint ignore=DL3008
@@ -57,14 +57,14 @@ RUN \
   curl -s -L https://github.com/"${GITHUB_ACCOUNT}"/"${GITHUB_REPOSITORY}"/archive/"${RELEASE}".zip > source.zip && \
   unzip source.zip -x "*/docs/**" "*/.*" && \
   rm source.zip && \
-  mv "${GITHUB_REPOSITORY}-${RELEASE_CONCAT}/context-provider" /opt/tutorial && \
+  mv "${GITHUB_REPOSITORY}-${RELEASE_CONCAT}/test-controller" /fiware-test-controller && \
   # Remove unzip and clean apt cache
   apt-get clean && \
   apt-get remove -y unzip && \
   apt-get -y autoremove && \
   rm -rf /var/lib/apt/lists/* 
 
-WORKDIR /opt/tutorial
+WORKDIR /fiware-test-controller 
 
 # hadolint ignore=DL3008
 RUN \
@@ -81,7 +81,7 @@ USER node
 ENV NODE_ENV=development
 # Ports used by application
 EXPOSE ${WEB_APP_PORT:-3002} ${DEVICES_PORT:-3003}
-CMD ["node", "/bin/www"]
+CMD ["node", "/fiware-test-controller/bin/www"]
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
    CMD npm run healthcheck
 
@@ -114,11 +114,11 @@ LABEL "org.opencontainers.image.vendor"="FIWARE Foundation"
 LABEL "org.opencontainers.image.licenses"="MIT"
 LABEL "org.opencontainers.image.title"="FIWARE NGSI-v2 Tutorials"
 LABEL "org.opencontainers.image.description"="Simple Node.js express application for use with the FIWARE NGSI-v2 tutorials"
-#LABEL "org.opencontainers.image.source"=https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPOSITORY}
+LABEL "org.opencontainers.image.source"=https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPOSITORY}
 LABEL "org.nodejs.version"=${NODE_VERSION}
 
-COPY --from=builder /opt/tutorial /opt/tutorial
-WORKDIR /opt/tutorial
+COPY --from=builder /fiware-test-controller /fiware-test-controller
+WORKDIR /fiware-test-controller
 
 USER nobody
 ENV NODE_ENV=production
