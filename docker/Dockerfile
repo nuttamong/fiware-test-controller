@@ -34,7 +34,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # the repository and replace the whole RUN statement below by the following COPY statement 
 # in your local source using :
 #
-COPY ./test-controller /fiware-test-controller
+# COPY ./test-controller /opt/tutorials
 #
 
 # hadolint ignore=DL3008
@@ -57,14 +57,14 @@ RUN \
   curl -s -L https://github.com/"${GITHUB_ACCOUNT}"/"${GITHUB_REPOSITORY}"/archive/"${RELEASE}".zip > source.zip && \
   unzip source.zip -x "*/docs/**" "*/.*" && \
   rm source.zip && \
-  mv "${GITHUB_REPOSITORY}-${RELEASE_CONCAT}/test-controller" /fiware-test-controller && \
+  mv "${GITHUB_REPOSITORY}-${RELEASE_CONCAT}/test-controller" /opt/tutorials && \
   # Remove unzip and clean apt cache
   apt-get clean && \
   apt-get remove -y unzip && \
   apt-get -y autoremove && \
   rm -rf /var/lib/apt/lists/* 
 
-WORKDIR /fiware-test-controller 
+WORKDIR /opt/tutorials
 
 # hadolint ignore=DL3008
 RUN \
@@ -81,7 +81,7 @@ USER node
 ENV NODE_ENV=development
 # Ports used by application
 EXPOSE ${WEB_APP_PORT:-3002} ${DEVICES_PORT:-3003}
-CMD ["node", "/fiware-test-controller/bin/www"]
+CMD ["node", "/opt/tutorials/bin/www"]
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
    CMD npm run healthcheck
 
@@ -117,8 +117,8 @@ LABEL "org.opencontainers.image.description"="Simple Node.js express application
 LABEL "org.opencontainers.image.source"=https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPOSITORY}
 LABEL "org.nodejs.version"=${NODE_VERSION}
 
-COPY --from=builder /fiware-test-controller /fiware-test-controller
-WORKDIR /fiware-test-controller
+COPY --from=builder /opt/tutorials /opt/tutorials
+WORKDIR /opt/tutorials
 
 USER nobody
 ENV NODE_ENV=production
