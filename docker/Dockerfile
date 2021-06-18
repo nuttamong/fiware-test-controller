@@ -1,8 +1,8 @@
 ARG NODE_VERSION=14
 ARG GITHUB_ACCOUNT=nuttamong
-ARG GITHUB_REPOSITORY=fiware-test-provider
+ARG GITHUB_REPOSITORY=fiware-test-controller
 ARG DOWNLOAD=latest
-ARG SOURCE_BRANCH=main
+ARG SOURCE_BRANCH=master
 ARG SOURCE_COMMIT=unknown
 
 ########################################################################################
@@ -34,7 +34,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # the repository and replace the whole RUN statement below by the following COPY statement 
 # in your local source using :
 #
-COPY ./test /opt/tutorial
+COPY ./test-controller /opt/tutorial
 #
 
 # hadolint ignore=DL3008
